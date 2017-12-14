@@ -1,5 +1,5 @@
 #coding:utf-8
-import cPickle
+import pickle
 import hashlib
 class UrlManager(object):
     def __init__(self):
@@ -33,7 +33,7 @@ class UrlManager(object):
             return
         m = hashlib.md5()
         m.update(url)
-        url_md5 =  m.hexdigest()[8:-8]
+        url_md5 = m.hexdigest()[8:-8]
         if url not in self.new_urls and url_md5 not in self.old_urls:
             self.new_urls.add(url)
 
@@ -69,8 +69,8 @@ class UrlManager(object):
         :param data:数据
         :return:
         '''
-        with open(path, 'wb') as f:
-            cPickle.dump(data, f)
+        with open(path, 'wb+') as f:
+            pickle.dump(data, f)
 
     def load_progress(self,path):
         '''
@@ -78,11 +78,11 @@ class UrlManager(object):
         :param path:文件路径
         :return:返回set集合
         '''
-        print '[+] 从文件加载进度: %s' % path
+        print('[+] 从文件加载进度: %s' % path)
         try:
-            with open(path, 'rb') as f:
-                tmp = cPickle.load(f)
+            with open(path, 'rb+') as f:
+                tmp = pickle.load(f)
                 return tmp
         except:
-            print '[!] 无进度文件, 创建: %s' % path
+            print('[!] 无进度文件, 创建: %s' % path)
         return set()

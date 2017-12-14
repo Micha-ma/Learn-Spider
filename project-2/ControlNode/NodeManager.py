@@ -24,14 +24,14 @@ class NodeManager(object):
         BaseManager.register('get_task_queue',callable=lambda:url_q)
         BaseManager.register('get_result_queue',callable=lambda:result_q)
         #绑定端口8001，设置验证口令‘baike’。这个相当于对象的初始化
-        manager=BaseManager(address=('',8001),authkey='baike')
+        manager=BaseManager(address=('',8001),authkey='baike'.encode('utf-8'))
         #返回manager对象
         return manager
 
 
 
     def url_manager_proc(self,url_q,conn_q,root_url):
-        url_manager = UrlManager()
+        url_manager = UrlManager.UrlManager()
         url_manager.add_new_url(root_url)
         while True:
             while(url_manager.has_new_url()):
@@ -78,7 +78,7 @@ class NodeManager(object):
                 time.sleep(0.1)#延时休息
 
     def store_proc(self,store_q):
-        output = DataOutput()
+        output = DataOutput.DataOutput()
         while True:
             if not store_q.empty():
                 data = store_q.get()
@@ -104,7 +104,7 @@ if __name__=='__main__':
     node = NodeManager()
     manager = node.start_Manager(url_q,result_q)
     #创建URL管理进程、 数据提取进程和数据存储进程
-    url_manager_proc = Process(target=node.url_manager_proc, args=(url_q,conn_q,'http://baike.baidu.com/view/284853.htm',))
+    url_manager_proc = Process(target=node.url_manager_proc, args=(url_q,conn_q,'http://baike.baidu.com/view/284853.htm'.encode('utf-8'),))
     result_solve_proc = Process(target=node.result_solve_proc, args=(result_q,conn_q,store_q,))
     store_proc = Process(target=node.store_proc, args=(store_q,))
     #启动3个进程和分布式管理器
