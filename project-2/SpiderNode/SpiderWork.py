@@ -1,8 +1,8 @@
 #coding:utf-8
 from multiprocessing.managers import BaseManager
 
-from HtmlDownloader import HtmlDownloader
-from HtmlParser import HtmlParser
+import HtmlDownloader
+import HtmlParser
 
 
 class SpiderWork(object):
@@ -24,7 +24,7 @@ class SpiderWork(object):
         #初始化网页下载器和解析器
         self.downloader = HtmlDownloader()
         self.parser = HtmlParser()
-        print 'init finish'
+        print('init finish')
 
     def crawl(self):
         while(True):
@@ -33,20 +33,19 @@ class SpiderWork(object):
                     url = self.task.get()
 
                     if url =='end':
-                        print '控制节点通知爬虫节点停止工作...'
+                        print('控制节点通知爬虫节点停止工作...')
                         #接着通知其它节点停止工作
                         self.result.put({'new_urls':'end','data':'end'})
                         return
-                    print '爬虫节点正在解析:%s'%url.encode('utf-8')
+                    print('爬虫节点正在解析:%s'%url.encode('utf-8'))
                     content = self.downloader.download(url)
                     new_urls,data = self.parser.parser(url,content)
                     self.result.put({"new_urls":new_urls,"data":data})
-            except EOFError,e:
-                print "连接工作节点失败"
+            except EOFError:
+                print("连接工作节点失败")
                 return
-            except Exception,e:
-                print e
-                print 'Crawl  fali '
+            except Exception:
+                print('Crawl  fali ')
 
 
 
